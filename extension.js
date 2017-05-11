@@ -5,7 +5,7 @@ var Client = require('ssh2').Client;
 var fs = require('fs');
 
 function isWorkspaceOpen() {
-	return vscode.workspace.rootPath !== undefined;
+  return vscode.workspace.rootPath !== undefined;
 }
 
 function getFilePath() {
@@ -20,12 +20,12 @@ function getFilePath() {
 // your extension is activated the very first time the command is executed
 function activate(context) {
 
-	// Use the console to output diagnostic information (console.log) and errors (console.error)
-	// This line of code will only be executed once when your extension is activated
-	console.log('Congratulations, your extension "ftp-code" is now active!');
-	var conn = new Client();
+  // Use the console to output diagnostic information (console.log) and errors (console.error)
+  // This line of code will only be executed once when your extension is activated
+  console.log('Congratulations, your extension "ftp-code" is now active!');
+  var conn = new Client();
 
-	var initSettings = vscode.commands.registerCommand('extension.initSettings', function() {
+  var initSettings = vscode.commands.registerCommand('extension.initSettings', function() {
     if (!isWorkspaceOpen()) return;
 
     const filePath = getFilePath();
@@ -34,20 +34,20 @@ function activate(context) {
       vscode.window.showErrorMessage('Settings file already exist!');
     } else {
       const settings = JSON.stringify({
-				"host": "",
-				"port": "",
-				"username": "",
-				"password": "",
+        "host": "",
+        "port": "",
+        "username": "",
+        "password": "",
         "permissions": "",
         "path": ""
-			});
+      });
       const fd = fs.openSync(filePath, 'wx');
       fs.writeFileSync(filePath, settings);
       fs.closeSync(fd);
     }
-	});
+  });
 
-	var ftpCheckCommand = vscode.commands.registerCommand('extension.checkConnection', function () {
+  var ftpCheckCommand = vscode.commands.registerCommand('extension.checkConnection', function () {
     if (!isWorkspaceOpen()) return;
 
     const filePath = getFilePath();
@@ -58,12 +58,12 @@ function activate(context) {
       const settings = JSON.parse(fs.readFileSync(filePath));
 
       conn.on('ready', function() {
-			  console.log('Connection Established');
-		  }).connect(settings);
+        console.log('Connection Established');
+      }).connect(settings);
     }
-	});
+  });
 
-	var ftpChangePermissions = vscode.commands.registerCommand('extension.changePermissions', function () {
+  var ftpChangePermissions = vscode.commands.registerCommand('extension.changePermissions', function () {
     if (!isWorkspaceOpen()) return;
 
     const filePath = getFilePath();
@@ -87,24 +87,24 @@ function activate(context) {
               conn.end();
             });
           });
-		    }).connect(settings);
+        }).connect(settings);
       }
-    }    
-	});
+    }
+  });
 
   var ftpStat = vscode.commands.registerCommand('extension.stat', function(err) {
 
   });
 
-	context.subscriptions.push(initSettings);
-	context.subscriptions.push(ftpChangePermissions);
-	context.subscriptions.push(ftpCheckCommand);
+  context.subscriptions.push(initSettings);
+  context.subscriptions.push(ftpChangePermissions);
+  context.subscriptions.push(ftpCheckCommand);
 }
 exports.activate = activate;
 
 // this method is called when your extension is deactivated
 function deactivate() {
-	console.log('test');
+  console.log('test');
 }
 exports.deactivate = deactivate;
 
